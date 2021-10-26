@@ -4,9 +4,63 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="js/android_phones.js"></script>
     <title>Document</title>
 </head>
 <body>
-    SG SHIP SHOP   
+    <div>SG SHIP SHOP</div>
+    <div>HARGA HP ANDROID</div>
+    <div>Current Rate (SGD to IDR) = <span id="rate"></span></div>
+    <form action="" method="">
+        <div>Cari Tipe HP:</div>
+        <div>
+            <input list="android_phones" name="android_phone" id="android_phone">
+            <datalist id="android_phones">
+                <script>
+                    for (var i = 0; i < android_phones.length; i++) {
+                        document.write("<option value='"+ android_phones[i].name +"'>")
+                    }
+                </script>
+            </datalist>
+        </div>
+        <div>
+            <input type="submit" value="Cek Harga">
+        </div>
+    </form>
 </body>
 </html>
+
+<script type="text/javascript">
+    function formatRupiah (num){
+            num_string = num.toString(),
+            sisa 	= num_string.length % 3,
+            rupiah 	= num_string.substr(0, sisa),
+            ribuan 	= num_string.substr(sisa).match(/\d{3}/g);
+                
+        if (ribuan) {
+            separator = sisa ? '.' : '';
+            rupiah += separator + ribuan.join('.');
+        }
+        return "Rp" + rupiah;
+    }
+
+    fetch("https://currency-exchange.p.rapidapi.com/exchange?from=SGD&to=IDR&q=1.0", {
+        "method": "GET",
+        "headers": {
+            "x-rapidapi-host": "currency-exchange.p.rapidapi.com",
+            "x-rapidapi-key": "b0fcb07fd8mshe7bb5932c2718a3p1c07a0jsnd1e84edd8c4e"
+        }
+    })
+    .then(response => {
+        response.json().then( res => {
+            // console.log(res);
+            document.getElementById("rate").innerHTML = formatRupiah(Math.ceil(res*1.05 / 100) * 100);
+        })
+        .catch(err => {
+            console.error(err);    
+        })
+    })
+    .catch(err => {
+        console.error(err);
+    });
+</script>
