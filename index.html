@@ -5,45 +5,137 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <script src="js/android_phones.js"></script>
-    <title>Document</title>
-</head>
-<body>
-    <div>SG SHIP SHOP</div>
-    <div>HARGA HP ANDROID</div>
-    <div>Current Rate (SGD to IDR) = <span id="rate"></span></div>
-    <form action="" method="">
-        <div>Cari Tipe HP:</div>
-        <div>
-            <input list="android_phones" name="android_phone" id="android_phone">
-            <datalist id="android_phones">
-                <script>
-                    for (var i = 0; i < android_phones.length; i++) {
-                        document.write("<option value='"+ android_phones[i].name +"'>")
-                    }
-                </script>
-            </datalist>
-        </div>
-        <div>
-            <input type="submit" value="Cek Harga">
-        </div>
-    </form>
-</body>
-</html>
-
-<script type="text/javascript">
-    function formatRupiah (num){
+    <link rel="stylesheet" href="style/style.css">
+    <link rel="shortcut icon" href="img/logo.jpg" type="image/x-icon">
+    <title>SG ShipShop Android Phones Pricing</title>
+    <script>
+        let rate_sgdidr = rate_usdidr = 0;
+        function formatRupiah (num){
             num_string = num.toString(),
             sisa 	= num_string.length % 3,
             rupiah 	= num_string.substr(0, sisa),
             ribuan 	= num_string.substr(sisa).match(/\d{3}/g);
                 
-        if (ribuan) {
-            separator = sisa ? '.' : '';
-            rupiah += separator + ribuan.join('.');
+            if (ribuan) {
+                separator = sisa ? '.' : '';
+                rupiah += separator + ribuan.join('.');
+            }
+            return "Rp" + rupiah;
         }
-        return "Rp" + rupiah;
-    }
 
+        function changePrice(){
+            document.getElementById("price").value = document.getElementById("android_phones").value;
+        }
+
+        function calculatePrice(){
+            prc = document.getElementById("price").value;
+            console.log(prc);
+            if (prc == null || prc == "" || prc == undefined || isNaN(prc)) {
+                alert("Yakin Harganya Udah bener? :)");
+            }
+            else {
+                a = prc * rate_sgdidr;
+                document.getElementById("a").innerHTML = formatRupiah(a);
+                // console.log("a = " + a);
+
+                b = 76 * rate_sgdidr;
+                document.getElementById("b").innerHTML = formatRupiah(b);
+                // console.log("b = " + b);
+
+                // hitung pajak
+                // Nilai Pabean
+                nilai_pabean = a + b;
+                console.log("nilai_pabean = " + nilai_pabean);
+
+                nilai_pabean_usd = nilai_pabean / rate_usdidr;
+                console.log("nilai_pabean_usd = " + nilai_pabean_usd);
+
+                // Bea Masuk (Kalau Nilai Pabean < 1500 USD, 7.5%. Otherwise 0%.)
+                bea_masuk = nilai_pabean_usd < 1500 ? nilai_pabean * 0.075 : 0;
+                console.log("bea_masuk = " + bea_masuk);
+
+                //PPn (10% dari Nilai Pabean)
+                ppn = nilai_pabean * 0.1;
+                console.log("ppn = " + ppn);
+
+                //PPh (Kalau Nilai Pabean < 1500 USD, 0%. Otherwise 20%.)
+                pph = nilai_pabean_usd < 1500 ? 0 : nilai_pabean * 0.2;
+                console.log("pph = " + pph);
+
+                // Custom Handling Fee (Kalau Nilai Pabean < 1500 USD, 165.000. Otherwise 250.000.)
+                custom_handling = nilai_pabean_usd < 1500 ? 165000 : 250000;
+                console.log("custom_handling = " + custom_handling);
+
+                c = Math.round(bea_masuk + ppn + pph + custom_handling, 0);
+                document.getElementById("c").innerHTML = formatRupiah(c);
+
+                d = 500000;
+                document.getElementById("d").innerHTML = formatRupiah(d);
+
+                e = a + b + c + d;
+                document.getElementById("e").innerHTML = formatRupiah(e);
+
+                f = Math.ceil(e / 10000) * 10000;
+                document.getElementById("f").innerHTML = formatRupiah(f);
+            }
+        }
+    </script>
+</head>
+<body>
+    <header>
+        <img src="img/logo.jpg" alt="">
+        <div>Daftar Harga HP Android</div>
+    </header>
+    <!-- <div>Current Rate (SGD to IDR) = <span id="rate_sgdidr"></span></div>
+    <div>Current Rate (USD to IDR) = <span id="rate_usdidr"></span></div> -->
+    <main>
+        <div class="phone_choser">
+            <h1>Cara 1</h1>
+            <div>Pilih Tipe HP:</div>
+            <select id="android_phones" onChange="changePrice()">
+                <option>Pilih HP</option>
+                <script>
+                    for (var i = 0; i < android_phones.length; i++) {
+                        document.write("<option data-price='1' value='"+ android_phones[i].price +"'>" + android_phones[i].name + "</option>")
+                    }
+                </script>
+            </select>
+            <input type="hidden" id="price">
+            <!-- <div>ATAU</div>
+            <div>
+                Masukkan harga barang (dalam SGD):
+            </div>
+            <div>
+                S$<input type="text" id="price">
+            </div> -->
+            <input type="submit" value="Lihat Harga" onclick="calculatePrice()">
+        </div>
+
+        <div class="separator">
+            <hr>ATAU<hr>
+        </div>
+        
+        <div class="price_calculator">
+            <h1>Cara 2</h1>
+            <div>Jika tipe HP yang kamu cari tidak ada pada daftar di atas (atau mau cari vendor lain), maka ikuti langkah berikut:</div>
+            <div>1. Cari HP yang kamu mau di <a href="https://shopee.sg/" target="_blank">shopee.sg</a> atau <a href="https://www.lazada.sg/" target="_blank">lazada.sg</a>.</div>
+            <div>2. Masukkan harga barang dalam SGD:</div>
+            <div class=price_sgd>
+                <div>S$</div>
+                <input type="text">
+            </div>
+            <div>3. Hitung harganya dengan cara klik tombol di bawah:</div>
+            <input type="submit" value="Hitung Harga" onclick="calculatePrice()">
+        </div>
+    </main>
+    <footer>
+        Copyright &copy; SG ShipShop 2021
+    </footer>
+</body>
+</html>
+
+<script type="text/javascript">
+    // get SGD to IDR rate
     fetch("https://currency-exchange.p.rapidapi.com/exchange?from=SGD&to=IDR&q=1.0", {
         "method": "GET",
         "headers": {
@@ -53,8 +145,29 @@
     })
     .then(response => {
         response.json().then( res => {
-            // console.log(res);
-            document.getElementById("rate").innerHTML = formatRupiah(Math.ceil(res*1.05 / 100) * 100);
+            rate_sgdidr = Math.ceil(res*1.05 / 100) * 100;
+            document.getElementById("rate_sgdidr").innerHTML = formatRupiah(rate_sgdidr);
+        })
+        .catch(err => {
+            console.error(err);    
+        })
+    })
+    .catch(err => {
+        console.error(err);
+    });
+
+    // get USD to IDR rate
+    fetch("https://currency-exchange.p.rapidapi.com/exchange?from=USD&to=IDR&q=1.0", {
+        "method": "GET",
+        "headers": {
+            "x-rapidapi-host": "currency-exchange.p.rapidapi.com",
+            "x-rapidapi-key": "b0fcb07fd8mshe7bb5932c2718a3p1c07a0jsnd1e84edd8c4e"
+        }
+    })
+    .then(response => {
+        response.json().then( res => {
+            rate_usdidr = Math.ceil(res / 100) * 100;
+            document.getElementById("rate_usdidr").innerHTML = formatRupiah(rate_usdidr);
         })
         .catch(err => {
             console.error(err);    
@@ -64,3 +177,51 @@
         console.error(err);
     });
 </script>
+
+<div class="result">
+    <div class="result_close">&times;</div>
+    <div class="result_wrapper">
+        <h1>Harga Barang</h1>
+
+        <h2>Black Shark blablabla</h2>
+        <div>xxx SGD</div>
+
+        <h2>Harga yang kamu masukkan:</h2>
+        <div>xxx SGD</div>
+
+        <h2>Rincian Impor ke Indonesia</h2>
+        <div>A. Harga Barang</div>
+        <div id="a">xxx</div>
+        <div>B. Ongkir (Ke Kota Besar Di Indonesia)</div>
+        <div id="b">xxx</div>
+        <div>C. Total Pengurusan Pajak</div>
+        <div id="c">xxx</div>
+        <div>D. Handling Fee (by sg.shipshop)</div>
+        <div id="d">xxx</div>
+        <div>TOTAL HARGA</div>
+        <div id="e">xxx</div>
+        <div>TOTAL HARGA FINAL (ROUNDING)</div>
+        <div id="f">xxx</div>
+
+        <h2>Frequently Asked Questions (FAQ)</h2>
+        <div class="question">1. Ongkos kirim apakah sudah sampai alamat saya?</div>
+        <div>Ongkos kirim yang tercantum menggunakan ekspedisi DHL Express. Pengiriman dari Singapura ke Kota-Kota besar di Indonesia dengan berat paket 0.5kg - 0.7kg. Jika pengiriman ke kota lain, bisa menghitung ongkos kirim tambahan dari Jakarta Barat ke kota tujuan. Ongkos kirim tambahan dapat dihitung pada JNE / J&T / SiCepat / AnterAja.</div>
+        <div class="question">2. Apa yang perlu saya lakukan untuk proses perpajakan?</div>
+        <div>Mohon siapkan KTP sesuai nama penerima untuk pengurusan pajaknya. Jika diperlukan, akan diminta NPWP.</div>
+        <div class="question">3. Apakah IMEI aman?</div>
+        <div>IMEI bukan hanya "aman". Pembayaran pajak dan pendaftaran IMEI dilakukan secara resmi melalui bea cukai. Pendaftaran resmi bea cukai artinya lengkap dengan dokumen pajak yang dapat dipertanggungjawabkan secara hukum, legal, IMEI aktif seumur hidup, all operator. Mohon langsung infokan ke mimin jika IMEI belum aktif saat paket diterima. Mimin akan bantu untuk followup ke DHL dan Bea Cukai.</div>
+        <div class="question">4. Apakah saya akan ditagih pajak ketika barang datang?</div>
+        <div>TIDAK. Mohon jangan membayar apapun ke pihak ekspedisi jika ditagih pajak. Mohon langsung infokan ke mimin jika kakak ditagih pajak.</div>
+        <div class="question">5. Garansinya gimana?</div>
+        <div>Setiap jenis HP punya ketentuan masing-masing yang bisa dicek di halaman produk masing-masing. Jika garansi Singapore, shipshop bisa membantu untuk mengklaim. Tapi mohon maaf, untuk ongkos kirim ditanggung pembeli.</div>
+        <div class="question">6. Berapa lama pengiriman sampai ke alamat saya?</div>
+        <div>Normalnya barang akan dikirim oleh vendor ke alamat kami di sg dalam 2-5 hari kerja (Mohon cek lagi di shopee sesuai HP yang dipilih). Setelah barang kami terima dan kami drop ke ekspedisi, biasanya pengiriman dari sg ke kota besar di Indonesia 7 - 10 hari kerja. Proses tersebut sudah termasuk pengurusan pajak oleh Bea Cukai.</div>
+        <div>7. Bagaimana cara pembayarannya?</div>
+        <div>Jika kakak sudah oke, kakak bisa melakukan pembayaran melalui transfer ke bank BCA atau Tokopedia. </div>
+        <div>Kalau kakak mau via tokopedia, berikut ketentuannya:
+            - barang tidak langsung diantar ke alamat kakak (harus transit dulu di alamat kami di jakbar krn harus pakai resi dr tokopedia)
+            - kena tambahan charge ongkir dan asuransi sesuai perhitungan di aplikasi tokopedia nya (utk pengiriman dr jakbar ke alamat kakak)
+            - dan juga kena tambahan charge 2.5% dari harga total 😊😊</div>
+        
+    </div>
+</div>
