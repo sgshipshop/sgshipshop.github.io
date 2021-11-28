@@ -3,10 +3,16 @@
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-    <script src="js/android_phones.js"></script>
-    <script src="js/helper.js"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+    
+    <!-- <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script> -->
+    <!-- <script src="js/android_phones.js"></script>
+    <script src="js/helper.js"></script> -->
+    <script src="js/ongkir.js"></script>
     <script src="js/interaction.js"></script>
     <link rel="stylesheet" href="style/style.css">
     <link rel="shortcut icon" href="img/logo.jpg" type="image/x-icon">
@@ -14,14 +20,94 @@
 </head>
 <body>
     <header>
-        <img src="img/logo.jpg" alt="">
-        <div>Daftar Harga HP Android</div>
+        <!-- <img src="img/logo.jpg" alt="">
+        <div>Daftar Harga HP Android</div> -->
+        <div>SGD to IDR = <span id="rate_sgdidr"></span></div>
+        <div>USD to IDR = <span id="rate_usdidr"></span></div>        
     </header>
-    <!-- 
-        <div>Current Rate (SGD to IDR) = <span id="rate_sgdidr"></span></div>
-        <div>Current Rate (USD to IDR) = <span id="rate_usdidr"></span></div>
-    -->
     <main>
+        <div>
+            <h1>Harga Barang (non IMEI)</h1>
+            <div>
+                <div class="form-group">
+                    <label for="jenisBarang">Jenis Barang</label>
+                    <select class="form-control" id="jenisBarang">
+                        <script>
+                            for (i = 0; i < ongkir.length; i++) {
+                                document.write("<option value='"+ongkir[i]["id"]+"'>"+ongkir[i]["jenis_barang"]+"</option>")
+                            }
+                        </script>
+                    </select>
+                </div>                
+                <div class="form-group">
+                    <label for="hargaBarang">Harga Barang</label>
+                    <div class="input-group mb-3">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text" id="basic-addon1">S$</span>
+                        </div>
+                        <input type="number" class="form-control" id="hargaBarang" placeholder="Harga Barang" aria-describedby="basic-addon1">
+                        <div class="input-group-append">
+                            <span class="input-group-text">.00</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="beratTimbangan">Berat Timbangan</label>
+                    <div class="input-group mb-3">
+                        <input type="number" class="form-control" id="beratTimbangan" placeholder="Berat Timbangan">
+                        <div class="input-group-append">
+                            <span class="input-group-text">kg</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="dimensiPaket">Dimensi Paket</label>
+                    <div class="form-row">
+                        <div class="col-auto">
+                            <div class="input-group mb-3">
+                                <input type="number" id="dimensiPaketP" class="form-control" placeholder="Panjang">
+                                <div class="input-group-append">
+                                    <span class="input-group-text">cm</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-auto">
+                            <div class="input-group mb-3">
+                                <input type="number" id="dimensiPaketL" class="form-control" placeholder="Lebar">
+                                <div class="input-group-append">
+                                    <span class="input-group-text">cm</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-auto">
+                            <div class="input-group mb-3">
+                                <input type="number" id="dimensiPaketT" class="form-control" placeholder="Tinggi">
+                                <div class="input-group-append">
+                                    <span class="input-group-text">cm</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <button id="generateHarga" class="btn btn-primary">Generate Harga</button>
+                </div>
+            </div>
+            
+            <div>
+                <div class="form-group">
+                    <label for="detailHarga">Detail Harga</label>
+                    <textarea class="form-control" id="detailHarga" rows="3"></textarea>
+                </div>
+                <div id="successAlert" class="alert alert-success" role="alert">
+                    Text Copied!
+                </div>
+                <div class="form-group">
+                    <button id="copyBtn" class="btn btn-primary">Copy Text</button>
+                </div>
+            </div>
+        </div>
+        <!--
         <div class="phone_choser">
             <h1>Cara 1</h1>
             <div>Pilih Tipe HP:</div>
@@ -55,6 +141,7 @@
             <div>3. Hitung harganya dengan cara klik tombol di bawah:</div>
             <input type="submit" value="Hitung Harga" onclick="calculatePrice2()">
         </div>
+        -->
     </main>
     <footer>
         Copyright &copy; SG ShipShop 2021
@@ -63,50 +150,10 @@
 </html>
 
 <script type="text/javascript">
-    // get SGD to IDR rate
-    fetch("https://currency-exchange.p.rapidapi.com/exchange?from=SGD&to=IDR&q=1.0", {
-        "method": "GET",
-        "headers": {
-            "x-rapidapi-host": "currency-exchange.p.rapidapi.com",
-            "x-rapidapi-key": "b0fcb07fd8mshe7bb5932c2718a3p1c07a0jsnd1e84edd8c4e"
-        }
-    })
-    .then(response => {
-        response.json().then( res => {
-            rate_sgdidr = Math.ceil(res*1.05 / 100) * 100;
-            // document.getElementById("rate_sgdidr").innerHTML = formatRupiah(rate_sgdidr);
-        })
-        .catch(err => {
-            console.error(err);    
-        })
-    })
-    .catch(err => {
-        console.error(err);
-    });
 
-    // get USD to IDR rate
-    fetch("https://currency-exchange.p.rapidapi.com/exchange?from=USD&to=IDR&q=1.0", {
-        "method": "GET",
-        "headers": {
-            "x-rapidapi-host": "currency-exchange.p.rapidapi.com",
-            "x-rapidapi-key": "b0fcb07fd8mshe7bb5932c2718a3p1c07a0jsnd1e84edd8c4e"
-        }
-    })
-    .then(response => {
-        response.json().then( res => {
-            rate_usdidr = Math.ceil(res / 100) * 100;
-            // document.getElementById("rate_usdidr").innerHTML = formatRupiah(rate_usdidr);
-        })
-        .catch(err => {
-            console.error(err);    
-        })
-    })
-    .catch(err => {
-        console.error(err);
-    });
 </script>
 
-<div class="result">
+<!-- <div class="result">
     <div class="result_wrapper">
         <div class="result_close">&times;</div>
         <div class="result_content">
@@ -155,4 +202,4 @@
             </div>
         </div>
     </div>
-</div>
+</div> -->
