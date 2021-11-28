@@ -15,10 +15,10 @@ header {
     justify-content: center;
     align-items: center;
 }
-header > img {
-    /* height: inherit;
-    margin-right: 10px; */
-}
+/* header > img {
+    height: inherit;
+    margin-right: 10px;
+} */
 
 /* MAIN */
 main {
