@@ -105,6 +105,7 @@ $(document).ready(function(){
             hargaBarang = 0;
         }
         hargaBarang = hargaBarang * rate_sgdidr;
+        hargaBarang = Math.ceil(hargaBarang / 10000) * 10000;
 
         // ongkos jastip
         ongkosJastip = 0;
