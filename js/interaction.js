@@ -104,8 +104,7 @@ $(document).ready(function(){
         if (isNaN(hargaBarang) || hargaBarang == "" || hargaBarang <= 0) {
             hargaBarang = 0;
         }
-        hargaBarang = hargaBarang * rate_sgdidr;
-        hargaBarang = Math.ceil(hargaBarang / 10000) * 10000;
+        hargaBarang = Math.ceil(hargaBarang * rate_sgdidr / 10000) * 10000;
 
         // ongkos jastip
         ongkosJastip = 0;
