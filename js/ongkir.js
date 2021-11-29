@@ -8,7 +8,7 @@ ongkir = [
         "id": 2,
         "jenis_barang": "sendal, sepatu",
         "ongkir_per_kg": 300000,
-        "threshold_additional_charge": 150000,
+        "threshold_additional_charge": 1500000,
         "additional_charge": 200000
     },
     {
