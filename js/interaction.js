@@ -22,8 +22,10 @@ $(document).ready(function(){
     })
     .then(response => {
         response.json().then( res => {
-            rate_sgdidr = Math.ceil(res*1.05 / 100) * 100;
-            document.getElementById("rate_sgdidr").innerHTML = formatRupiah(rate_sgdidr);
+            rate_sgdidr = Math.ceil(res / 100) * 100 + 500;
+            // document.getElementById("rate_sgdidr").innerHTML = formatRupiah(rate_sgdidr);
+            $("#used_rate_sgdidr").val(formatRupiah(rate_sgdidr));
+            $("#used_rate_sgdidr").attr("int", rate_sgdidr);
         })
         .catch(err => {
             console.error(err);    
@@ -34,25 +36,25 @@ $(document).ready(function(){
     });
 
     // get USD to IDR rate
-    fetch("https://currency-exchange.p.rapidapi.com/exchange?from=USD&to=IDR&q=1.0", {
-        "method": "GET",
-        "headers": {
-            "x-rapidapi-host": "currency-exchange.p.rapidapi.com",
-            "x-rapidapi-key": "b0fcb07fd8mshe7bb5932c2718a3p1c07a0jsnd1e84edd8c4e"
-        }
-    })
-    .then(response => {
-        response.json().then( res => {
-            rate_usdidr = Math.ceil(res / 100) * 100;
-            document.getElementById("rate_usdidr").innerHTML = formatRupiah(rate_usdidr);
-        })
-        .catch(err => {
-            console.error(err);    
-        })
-    })
-    .catch(err => {
-        console.error(err);
-    });
+    // fetch("https://currency-exchange.p.rapidapi.com/exchange?from=USD&to=IDR&q=1.0", {
+    //     "method": "GET",
+    //     "headers": {
+    //         "x-rapidapi-host": "currency-exchange.p.rapidapi.com",
+    //         "x-rapidapi-key": "b0fcb07fd8mshe7bb5932c2718a3p1c07a0jsnd1e84edd8c4e"
+    //     }
+    // })
+    // .then(response => {
+    //     response.json().then( res => {
+    //         rate_usdidr = Math.ceil(res*1.05 / 100) * 100;
+    //         document.getElementById("rate_usdidr").innerHTML = formatRupiah(rate_usdidr);
+    //     })
+    //     .catch(err => {
+    //         console.error(err);    
+    //     })
+    // })
+    // .catch(err => {
+    //     console.error(err);
+    // });
 
     $('#successAlert').hide();
     // $('#alert').alert('close');
@@ -80,7 +82,7 @@ $(document).ready(function(){
     });
 
     $("#generateHarga").click(function(){
-        selectedJenisBarangId = document.getElementById("jenisBarang").value;
+        selectedJenisBarang = document.getElementById("jenisBarang").value;
         hargaBarang = document.getElementById("hargaBarang").value;
 
         beratTimbangan = document.getElementById("beratTimbangan").value;
@@ -93,18 +95,18 @@ $(document).ready(function(){
         // dapetin ongkir
         ongkirObj = {};
         for (i = 0; i < ongkir.length; i++) {
-            if (selectedJenisBarangId == ongkir[i]["id"]) {
+            if (selectedJenisBarang === ongkir[i]["jenis_barang"]) {
                 ongkirObj = ongkir[i];
                 break;
             }
         }
-        // console.log(ongkirObj);
 
         // hitung harga
+        rate = parseInt($("#used_rate_sgdidr").attr("int"));
         if (isNaN(hargaBarang) || hargaBarang == "" || hargaBarang <= 0) {
             hargaBarang = 0;
         }
-        hargaBarang = Math.ceil(hargaBarang * rate_sgdidr / 10000) * 10000;
+        hargaBarang = Math.ceil(hargaBarang * rate / 10000) * 10000;
 
         // ongkos jastip
         ongkosJastip = 0;
@@ -159,5 +161,33 @@ $(document).ready(function(){
           el.style.cssText = 'height:auto; padding:0';
           el.style.cssText = 'height:' + el.scrollHeight + 'px';
         },0);
+    });
+
+    $("#button-min").click(function(){
+        old_rate = parseInt($("#used_rate_sgdidr").attr("int"));
+        new_rate = old_rate - 100;
+        $("#used_rate_sgdidr").attr("int", new_rate);
+        $("#used_rate_sgdidr").val(formatRupiah(new_rate));
+    });
+
+    $("#button-plus").click(function(){
+        old_rate = parseInt($("#used_rate_sgdidr").attr("int"));
+        new_rate = old_rate + 100;
+        $("#used_rate_sgdidr").attr("int", new_rate);
+        $("#used_rate_sgdidr").val(formatRupiah(new_rate));
+    });
+
+    $("#button-min-kg").click(function(){
+        new_kg = parseInt($("#beratTimbangan").attr("int")) - 1;
+        if (new_kg > 0) {
+            $("#beratTimbangan").attr("int", new_kg);
+            $("#beratTimbangan").val(new_kg);
+        }
+    });
+
+    $("#button-plus-kg").click(function(){
+        new_kg = parseInt($("#beratTimbangan").attr("int")) + 1;
+        $("#beratTimbangan").attr("int", new_kg);
+        $("#beratTimbangan").val(new_kg);
     });
 });

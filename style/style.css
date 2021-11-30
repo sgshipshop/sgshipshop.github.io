@@ -111,11 +111,11 @@ footer {
 } */
 
 /* FONT */
-h1 {
-    color: #000080;
+h3 {
+    /* color: #000080; */
     /* text-decoration: underline; */
     letter-spacing: 1px;
-    text-transform: uppercase;
+    /* text-transform: uppercase; */
     text-align: center;
 }
 
